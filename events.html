@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diseño Divino - Events</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+      color: #FFFFFF;
+      overflow-x: hidden;
+    }
+
+    /* Animated background elements matching main page */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(119, 0, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(64, 224, 208, 0.1) 0%, transparent 50%);
+      animation: float 6s ease-in-out infinite;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(1deg); }
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 60px auto;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 3rem;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, #7700FF 0%, #40E0D0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titleGlow 2s ease-in-out infinite alternate;
+      transition: all 0.3s ease;
+    }
+
+    @keyframes titleGlow {
+      from {
+        filter: drop-shadow(0 0 10px rgba(119, 0, 255, 0.5));
+      }
+      to {
+        filter: drop-shadow(0 0 20px rgba(64, 224, 208, 0.5));
+      }
+    }
+
+    h1:hover {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 30px rgba(119, 0, 255, 0.8));
+    }
+
+    /* Tab buttons */
+    .tab {
+      overflow: hidden;
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 25px rgba(119, 0, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(64, 224, 208, 0.1);
+    }
+
+    .tab button {
+      background: transparent;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 18px 32px;
+      font-size: 18px;
+      color: #FFFFFF;
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border-radius: 12px;
+      margin: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(64, 224, 208, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .tab button:hover::before {
+      left: 100%;
+    }
+
+    .tab button:hover {
+      background: linear-gradient(90deg, rgba(64, 224, 208, 0.2), rgba(119, 0, 255, 0.2));
+      color: #40E0D0;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(64, 224, 208, 0.3);
+    }
+
+    .tab button.active {
+      background: linear-gradient(135deg, #7700FF 0%, #40E0D0 100%);
+      color: #FFFFFF;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(119, 0, 255, 0.4);
+    }
+
+    .tab button.active:hover {
+      background: linear-gradient(135deg, #40E0D0 0%, #7700FF 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(64, 224, 208, 0.5);
+    }
+
+    /* Tab content */
+    .tabcontent {
+      display: none;
+      animation: fadeInUp 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .event-card {
+      background: linear-gradient(135deg, rgba(119, 0, 255, 0.1) 0%, rgba(64, 224, 208, 0.05) 100%);
+      padding: 25px;
+      margin: 20px 0;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(64, 224, 208, 0.2);
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .event-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(64, 224, 208, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .event-card:hover::before {
+      left: 100%;
+    }
+
+    .event-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(119, 0, 255, 0.3), 0 0 30px rgba(64, 224, 208, 0.2);
+      border-color: rgba(64, 224, 208, 0.4);
+      background: linear-gradient(135deg, rgba(119, 0, 255, 0.15) 0%, rgba(64, 224, 208, 0.1) 100%);
+    }
+
+    .event-card h3 {
+      margin: 0 0 12px;
+      background: linear-gradient(135deg, #7700FF 0%, #40E0D0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 1.4rem;
+      transition: all 0.3s ease;
+    }
+
+    .event-card:hover h3 {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 10px rgba(119, 0, 255, 0.5));
+    }
+
+    .event-card p {
+      margin: 8px 0;
+      font-size: 16px;
+      color: #40E0D0;
+      text-shadow: 0 0 10px rgba(64, 224, 208, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .event-card:hover p {
+      color: #FFFFFF;
+      text-shadow: 0 0 15px rgba(64, 224, 208, 0.4);
+    }
+
+    a.back-home {
+      display: inline-block;
+      margin: 40px 0 20px 0;
+      text-decoration: none;
+      background: linear-gradient(135deg, #7700FF 0%, #40E0D0 100%);
+      color: #FFFFFF;
+      padding: 15px 25px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 4px 15px rgba(119, 0, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    a.back-home::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s ease;
+    }
+
+    a.back-home:hover::before {
+      left: 100%;
+    }
+
+    a.back-home:hover {
+      background: linear-gradient(135deg, #40E0D0 0%, #7700FF 100%);
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(64, 224, 208, 0.4);
+    }
+
+    a.back-home:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+
+    /* Center the back button */
+    .back-btn-center {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      text-decoration: none;
+      background: linear-gradient(135deg, #7700FF 0%, #40E0D0 100%);
+      color: #FFFFFF;
+      padding: 15px 25px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 4px 15px rgba(119, 0, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .back-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .back-btn:hover::before {
+      left: 100%;
+    }
+
+    .back-btn:hover {
+      background: linear-gradient(135deg, #40E0D0 0%, #7700FF 100%);
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(64, 224, 208, 0.4);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        margin: 40px auto;
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      .tab {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .tab button {
+        width: 90%;
+        margin: 4px 0;
+      }
+
+      .event-card {
+        padding: 20px;
+        margin: 15px 0;
+      }
+
+      .event-card h3 {
+        font-size: 1.2rem;
+      }
+
+      .event-card p {
+        font-size: 14px;
+      }
+    }
+
+    /* Additional smooth transitions for all interactive elements */
+    * {
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Club Events</h1>
+
+    <!-- Tabs -->
+    <div class="tab">
+      <button class="tablinks active" onclick="openTab(event, 'held')">Events Held</button>
+      <button class="tablinks" onclick="openTab(event, 'ongoing')">Ongoing</button>
+      <button class="tablinks" onclick="openTab(event, 'upcoming')">Upcoming</button>
+    </div>
+
+    <!-- Events Held -->
+    <div id="held" class="tabcontent" style="display:block;">
+      <div class="event-card">
+        <h3>Design Thinking Workshop</h3>
+        <p>Date: 12 Jan 2025 | Time: 10:00 AM</p>
+      </div>
+      <div class="event-card">
+        <h3>UI/UX Bootcamp</h3>
+        <p>Date: 20 Feb 2025 | Time: 2:00 PM</p>
+      </div>
+      <div class="event-card">
+        <h3>Logo Designing Contest</h3>
+        <p>Date: 5 Mar 2025 | Time: 11:00 AM</p>
+      </div>
+      <div class="event-card">
+        <h3>Photoshop Masterclass</h3>
+        <p>Date: 22 Mar 2025 | Time: 3:00 PM</p>
+      </div>
+      <div class="event-card">
+        <h3>Creative Poster Challenge</h3>
+        <p>Date: 2 Apr 2025 | Time: 9:30 AM</p>
+      </div>
+      <div class="event-card">
+        <h3>3D Modelling Session</h3>
+        <p>Date: 18 Apr 2025 | Time: 1:00 PM</p>
+      </div>
+      <div class="event-card">
+        <h3>Design Hackathon</h3>
+        <p>Date: 25 Apr 2025 | Time: 10:00 AM</p>
+      </div>
+      <div class="event-card">
+        <h3>Typography Seminar</h3>
+        <p>Date: 8 May 2025 | Time: 4:00 PM</p>
+      </div>
+      <div class="event-card">
+        <h3>Illustrator Hands-on</h3>
+        <p>Date: 20 May 2025 | Time: 11:30 AM</p>
+      </div>
+      <div class="event-card">
+        <h3>Portfolio Building Workshop</h3>
+        <p>Date: 30 May 2025 | Time: 2:00 PM</p>
+      </div>
+    </div>
+
+    <!-- Ongoing -->
+    <div id="ongoing" class="tabcontent">
+      <div class="event-card">
+        <h3>Creative Coding with AI</h3>
+        <p>Date: 16 Sep 2025 | Time: 10:00 AM – 4:00 PM</p>
+        <p>Status: Happening Now!</p>
+      </div>
+    </div>
+
+    <!-- Upcoming -->
+    <div id="upcoming" class="tabcontent">
+      <div class="event-card">
+        <h3>Design Exhibition</h3>
+        <p>Date: 28 Sep 2025 | Time: 10:00 AM</p>
+      </div>
+      <div class="event-card">
+        <h3>Photography Workshop</h3>
+        <p>Date: 10 Oct 2025 | Time: 3:00 PM</p>
+      </div>
+      <div class="event-card">
+        <h3>Annual Creative Meet</h3>
+        <p>Date: 22 Oct 2025 | Time: 11:00 AM</p>
+      </div>
+    </div>
+
+  </div>
+  
+  <div class="back-btn-center">
+    <a href="./Club.html" class="back-btn">⬅ Back to Home</a>
+  </div>
+
+  <script>
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+
+    // Add smooth scrolling and enhanced interactions
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add click effect to all buttons
+      const buttons = document.querySelectorAll('button, .back-home, .back-btn');
+      buttons.forEach(button => {
+        button.addEventListener('click', function() {
+          this.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            this.style.transform = '';
+          }, 150);
+        });
+      });
+
+      // Add staggered animation to event cards
+      const eventCards = document.querySelectorAll('.event-card');
+      eventCards.forEach((card, index) => {
+        card.style.animationDelay = ${index * 0.1}s;
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+    });
+  </script>
+</body>
+</html>
